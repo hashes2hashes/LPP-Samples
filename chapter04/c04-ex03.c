@@ -40,10 +40,20 @@ int main() {
     for (int i = 0; i < argc; i++) {
       if (strcmp(argv[i], ">") == 0) {
         argv[i] = (char *)0;
-        printf("filename: %s\n", argv[i+1]);
+        printf("creat filename: %s\n", argv[i+1]);
         redirect = 1;
         unlink(argv[i+1]);
         fd = creat(argv[i+1], 0664);
+        stdout_copy = dup(1);
+        dup2(fd, 1);
+        close(fd);
+      }
+      else if (strcmp(argv[i], ">>") == 0) {
+        argv[i] = (char *)0;
+        printf("open filename: %s\n", argv[i+1]);
+        redirect = 1;
+        fd = open(argv[i+1], O_WRONLY | O_CREAT, 0664);
+        lseek(fd, 0, SEEK_END);
         stdout_copy = dup(1);
         dup2(fd, 1);
         close(fd);
